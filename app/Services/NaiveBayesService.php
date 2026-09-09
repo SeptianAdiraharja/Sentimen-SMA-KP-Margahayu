@@ -26,7 +26,7 @@ class NaiveBayesService
      */
     public function train(?int $aspectId = null): void
     {
-        $query = /usaTrainingDataset::query();
+        $query = TrainingDataset::query();
         if ($aspectId) {
             $query->where(function ($q) use ($aspectId) {
                 $q->where('aspect_id', $aspectId)->orWhereNull('aspect_id');
