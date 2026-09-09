@@ -26,7 +26,7 @@
 </head>
 <body>
     <div class="no-print" style="margin-bottom: 20px; text-align: right;">
-        <button onclick="window.print()" style="padding: 8px 16px; background-color: #059669; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+        <button onclick="window.print()" style="padding: 8px 16px; background-color: #1e3a8a; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
             Cetak Dokumen Sekarang (PDF)
         </button>
     </div>

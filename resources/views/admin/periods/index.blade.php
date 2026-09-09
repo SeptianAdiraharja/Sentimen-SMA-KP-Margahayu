@@ -12,36 +12,36 @@
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Periode</label>
                 <input type="text" name="name" required placeholder="Contoh: Evaluasi Menu MBG - Maret 2026"
-                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-800 focus:outline-none">
             </div>
 
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Deskripsi / Catatan</label>
                 <textarea name="description" rows="2" placeholder="Catatan kuesioner..."
-                          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-800 focus:outline-none"></textarea>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Mulai</label>
                     <input type="date" name="start_date" value="{{ date('Y-m-d') }}"
-                           class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                           class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-blue-800 focus:outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Selesai</label>
                     <input type="date" name="end_date" value="{{ date('Y-m-d', strtotime('+30 days')) }}"
-                           class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                           class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-blue-800 focus:outline-none">
                 </div>
             </div>
 
             <div class="pt-2">
                 <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" name="is_active" value="1" checked class="rounded text-emerald-600 focus:ring-emerald-500">
+                    <input type="checkbox" name="is_active" value="1" checked class="rounded text-blue-800 focus:ring-blue-800">
                     <span class="text-xs font-semibold text-slate-700">Set sebagai periode aktif saat ini</span>
                 </label>
             </div>
 
-            <button type="submit" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+            <button type="submit" class="w-full py-2.5 px-4 bg-amber-400 hover:bg-amber-300 text-blue-950 font-extrabold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-plus"></i>
                 <span>Simpan Periode</span>
             </button>
@@ -96,7 +96,7 @@
                                 <form action="{{ route('admin.periods.toggle', $period) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit" class="px-2.5 py-1 rounded text-xs font-semibold transition {{ $period->is_active ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' }}">
+                                    <button type="submit" class="px-2.5 py-1 rounded text-xs font-semibold transition {{ $period->is_active ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-blue-100 text-blue-800 hover:bg-blue-200' }}">
                                         {{ $period->is_active ? 'Tutup' : 'Buka' }}
                                     </button>
                                 </form>

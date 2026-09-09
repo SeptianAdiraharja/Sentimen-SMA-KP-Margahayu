@@ -103,12 +103,12 @@
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Contoh Teks</label>
                 <textarea name="text" rows="3" required placeholder="Contoh: sayurnya sangat bersih dan segar..."
-                          class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                          class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-blue-800 focus:outline-none"></textarea>
             </div>
 
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Label Sentimen</label>
-                <select name="label" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <select name="label" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-blue-800 focus:outline-none">
                     <option value="Positif">Positif</option>
                     <option value="Netral">Netral</option>
                     <option value="Negatif">Negatif</option>
@@ -117,7 +117,7 @@
 
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Aspek Terkait (Opsional)</label>
-                <select name="aspect_id" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <select name="aspect_id" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-blue-800 focus:outline-none">
                     <option value="">-- Umum / Semua Aspek --</option>
                     @foreach($aspects as $asp)
                     <option value="{{ $asp->id }}">{{ $asp->name }}</option>
@@ -125,7 +125,7 @@
                 </select>
             </div>
 
-            <button type="submit" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition">
+            <button type="submit" class="w-full py-2.5 px-4 bg-amber-400 hover:bg-amber-300 text-blue-950 font-extrabold text-xs rounded-xl shadow-sm transition">
                 Simpan ke Training Set
             </button>
         </form>

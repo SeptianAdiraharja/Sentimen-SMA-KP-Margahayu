@@ -6,10 +6,10 @@
     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <div class="flex items-center gap-3">
-                <span class="text-xl font-mono font-black text-emerald-600">{{ $response->respondent_code }}</span>
+                <span class="text-xl font-mono font-black text-blue-900">{{ $response->respondent_code }}</span>
                 <span class="px-3 py-1 rounded-full text-xs font-bold
-                    {{ $response->overall_rating == 'Sangat Puas' ? 'bg-emerald-100 text-emerald-800' : '' }}
-                    {{ $response->overall_rating == 'Cukup Puas' ? 'bg-teal-100 text-teal-800' : '' }}
+                    {{ $response->overall_rating == 'Sangat Puas' ? 'bg-blue-900 text-amber-300' : '' }}
+                    {{ $response->overall_rating == 'Cukup Puas' ? 'bg-blue-100 text-blue-800' : '' }}
                     {{ $response->overall_rating == 'Kurang Puas' ? 'bg-amber-100 text-amber-800' : '' }}
                     {{ in_array($response->overall_rating, ['Tidak Puas', 'Sangat Tidak Puas']) ? 'bg-rose-100 text-rose-800' : '' }}">
                     Rating: {{ $response->overall_rating }} ({{ $response->overall_rating_score }}/5)

@@ -5,7 +5,7 @@
 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
     <form method="GET" action="{{ route('admin.reports.index') }}" class="flex items-center gap-3 w-full sm:w-auto">
         <label class="text-xs font-semibold text-slate-500 uppercase">Periode:</label>
-        <select name="period_id" onchange="this.form.submit()" class="text-xs font-semibold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        <select name="period_id" onchange="this.form.submit()" class="text-xs font-semibold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-800">
             @foreach($periods as $p)
             <option value="{{ $p->id }}" {{ $activePeriod && $activePeriod->id == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
             @endforeach
@@ -14,13 +14,13 @@
 
     <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
         <a href="{{ route('admin.reports.export-excel', ['period_id' => $activePeriod?->id]) }}"
-           class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition flex items-center gap-2">
+           class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-blue-950 text-xs font-extrabold shadow-sm transition flex items-center gap-2">
             <i class="fa-solid fa-file-excel"></i>
             <span>Unduh Excel (.xlsx)</span>
         </a>
 
         <a href="{{ route('admin.reports.print', ['period_id' => $activePeriod?->id]) }}" target="_blank"
-           class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold shadow-sm transition flex items-center gap-2">
+           class="px-4 py-2 rounded-xl bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold shadow-sm transition flex items-center gap-2">
             <i class="fa-solid fa-print"></i>
             <span>Cetak / Cetak PDF</span>
         </a>
@@ -31,7 +31,7 @@
 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
     <div>
         <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-            <i class="fa-solid fa-clipboard-check text-emerald-600"></i>
+            <i class="fa-solid fa-clipboard-check text-blue-800"></i>
             <span>Rekomendasi Perbaikan untuk Pihak Pengelola / SPPG</span>
         </h3>
         <p class="text-xs text-slate-500">Berdasarkan hasil analisis sentimen pada 9 aspek kualitas makanan MBG</p>

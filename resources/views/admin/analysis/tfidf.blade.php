@@ -5,7 +5,7 @@
 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
     <form method="GET" action="{{ route('admin.analysis.tfidf') }}" class="flex flex-wrap items-center gap-3">
         <label class="text-xs font-semibold text-slate-500 uppercase">Pilih Aspek:</label>
-        <select name="aspect_id" onchange="this.form.submit()" class="text-xs font-semibold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        <select name="aspect_id" onchange="this.form.submit()" class="text-xs font-semibold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-800">
             <option value="">Semua Aspek Menu</option>
             @foreach($aspects as $asp)
             <option value="{{ $asp->id }}" {{ $aspectId == $asp->id ? 'selected' : '' }}>{{ $asp->name }}</option>
@@ -17,8 +17,8 @@
 </div>
 
 <!-- Penjelasan Rumus TF-IDF -->
-<div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200 text-indigo-950 text-xs flex items-start gap-3">
-    <i class="fa-solid fa-calculator text-indigo-600 text-lg mt-0.5"></i>
+<div class="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-950 text-xs flex items-start gap-3">
+    <i class="fa-solid fa-calculator text-blue-800 text-lg mt-0.5"></i>
     <div>
         <h4 class="font-bold mb-0.5">Metodologi TF-IDF (Term Frequency - Inverse Document Frequency):</h4>
         <p class="leading-relaxed">

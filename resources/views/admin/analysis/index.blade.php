@@ -13,7 +13,7 @@
             @csrf
             <input type="hidden" name="period_id" value="{{ $periodId }}">
             <input type="hidden" name="aspect_id" value="{{ $aspectId }}">
-            <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow-sm flex items-center gap-2 transition">
+            <button type="submit" class="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-blue-950 font-extrabold text-xs rounded-xl shadow-sm flex items-center gap-2 transition">
                 <i class="fa-solid fa-microchip"></i>
                 <span>Jalankan Klasifikasi Ulang</span>
             </button>
@@ -23,7 +23,7 @@
     <!-- Filter Form -->
     <form method="GET" action="{{ route('admin.analysis.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-100">
         <div>
-            <select name="period_id" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <select name="period_id" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-800 focus:outline-none">
                 <option value="">Semua Periode</option>
                 @foreach($periods as $p)
                 <option value="{{ $p->id }}" {{ $periodId == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
@@ -32,7 +32,7 @@
         </div>
 
         <div>
-            <select name="aspect_id" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <select name="aspect_id" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-800 focus:outline-none">
                 <option value="">Semua 9 Aspek</option>
                 @foreach($aspects as $asp)
                 <option value="{{ $asp->id }}" {{ $aspectId == $asp->id ? 'selected' : '' }}>{{ $asp->name }}</option>
@@ -41,7 +41,7 @@
         </div>
 
         <div>
-            <select name="sentiment" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <select name="sentiment" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-800 focus:outline-none">
                 <option value="">Semua Sentimen</option>
                 <option value="Positif" {{ $sentiment == 'Positif' ? 'selected' : '' }}>Positif</option>
                 <option value="Netral" {{ $sentiment == 'Netral' ? 'selected' : '' }}>Netral</option>
@@ -50,7 +50,7 @@
         </div>
 
         <div class="flex gap-2">
-            <button type="submit" class="flex-1 py-2 px-3 bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs rounded-xl transition">
+            <button type="submit" class="flex-1 py-2 px-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold text-xs rounded-xl transition">
                 <i class="fa-solid fa-filter"></i> Terapkan
             </button>
             <a href="{{ route('admin.analysis.index') }}" class="py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center">
@@ -77,7 +77,7 @@
             <tbody class="divide-y divide-slate-100">
                 @forelse($answers as $ans)
                 <tr class="hover:bg-slate-50 transition">
-                    <td class="p-3.5 font-mono font-bold text-emerald-600">
+                    <td class="p-3.5 font-mono font-bold text-blue-900">
                         {{ $ans->response?->respondent_code ?? '-' }}
                     </td>
                     <td class="p-3.5">

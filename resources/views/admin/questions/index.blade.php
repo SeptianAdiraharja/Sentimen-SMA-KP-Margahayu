@@ -12,12 +12,12 @@
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor Urut</label>
                 <input type="number" name="question_number" value="{{ $questions->count() + 1 }}" required
-                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-800 focus:outline-none">
             </div>
 
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Aspek Terkait</label>
-                <select name="aspect_id" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <select name="aspect_id" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-800 focus:outline-none">
                     <option value="">-- Tanpa Aspek Khusus (Rating Umum) --</option>
                     @foreach($aspects as $asp)
                     <option value="{{ $asp->id }}">{{ $asp->name }} ({{ $asp->code }})</option>
@@ -27,7 +27,7 @@
 
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Tipe Pertanyaan</label>
-                <select name="type" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <select name="type" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-800 focus:outline-none">
                     <option value="essay">Esai (Dianalisis Sentimen NLP)</option>
                     <option value="rating">Rating Skala (Kepuasan 1-5)</option>
                 </select>
@@ -36,17 +36,17 @@
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Teks Pertanyaan</label>
                 <textarea name="question_text" rows="3" required placeholder="Tuliskan pertanyaan untuk siswa..."
-                          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-800 focus:outline-none"></textarea>
             </div>
 
             <div class="pt-2">
                 <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" name="is_active" value="1" checked class="rounded text-emerald-600 focus:ring-emerald-500">
+                    <input type="checkbox" name="is_active" value="1" checked class="rounded text-blue-800 focus:ring-blue-800">
                     <span class="text-xs font-semibold text-slate-700">Aktifkan pertanyaan dalam kuesioner</span>
                 </label>
             </div>
 
-            <button type="submit" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+            <button type="submit" class="w-full py-2.5 px-4 bg-amber-400 hover:bg-amber-300 text-blue-950 font-extrabold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-plus"></i>
                 <span>Simpan Pertanyaan</span>
             </button>
@@ -76,7 +76,7 @@
                         <td class="p-3">
                             <span class="font-bold text-slate-800 text-sm block mb-0.5">{{ $q->question_text }}</span>
                             @if($q->aspect)
-                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
                                 Aspek: {{ $q->aspect->name }}
                             </span>
                             @else
@@ -86,12 +86,12 @@
                             @endif
                         </td>
                         <td class="p-3 text-center">
-                            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase {{ $q->type == 'essay' ? 'bg-indigo-50 text-indigo-700' : 'bg-amber-50 text-amber-700' }}">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase {{ $q->type == 'essay' ? 'bg-blue-50 text-blue-800 border border-blue-200' : 'bg-amber-50 text-amber-800 border border-amber-200' }}">
                                 {{ $q->type }}
                             </span>
                         </td>
                         <td class="p-3 text-center">
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $q->is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500' }}">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $q->is_active ? 'bg-blue-100 text-blue-900' : 'bg-slate-100 text-slate-500' }}">
                                 {{ $q->is_active ? 'Aktif' : 'Nonaktif' }}
                             </span>
                         </td>
