@@ -1,32 +1,6 @@
 @extends('layouts.admin', ['page_title' => 'Evaluasi Kinerja Model Naïve Bayes', 'page_subtitle' => 'Metrik performa (Akurasi, Presisi, Recall, F1-Score) dan pengelolaan data latih'])
 
 @section('content')
-<!-- Google Colab & Model .pkl Training & Evaluation Card -->
-<div class="bg-gradient-to-r from-slate-900 to-indigo-950 p-6 rounded-2xl border border-indigo-900 shadow-md text-white">
-    <!-- Metrik Colab Grid -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 pt-4 border-t border-slate-800">
-        <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-center">
-            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Colab Accuracy</span>
-            <div class="text-2xl font-black text-emerald-400">57.14%</div>
-            <span class="text-[10px] text-slate-400">8 benar dari 14 data uji</span>
-        </div>
-        <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-center">
-            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Weighted Precision</span>
-            <div class="text-2xl font-black text-blue-400">32.65%</div>
-            <span class="text-[10px] text-slate-400">Rata-rata terbobot kelas</span>
-        </div>
-        <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-center">
-            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Weighted Recall</span>
-            <div class="text-2xl font-black text-amber-400">57.14%</div>
-            <span class="text-[10px] text-slate-400">Sensitivitas data uji</span>
-        </div>
-        <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-center">
-            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Weighted F1-Score</span>
-            <div class="text-2xl font-black text-purple-400">41.56%</div>
-            <span class="text-[10px] text-slate-400">Harmonic mean P & R</span>
-        </div>
-    </div>
-</div>
 
 <!-- KPI Cards 4 Metrik Model Database Laravel -->
 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">

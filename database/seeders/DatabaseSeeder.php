@@ -139,7 +139,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // 5. Training Dataset Sentimen (Lexicon & data latih dasar bahasa Indonesia untuk MBG)
-        $this->seedTrainingDataset($aspectModels);
+        // $this->seedTrainingDataset($aspectModels);
 
         // 6. Impor Data Awal dari Excel jika belum ada respons
     }

@@ -21,8 +21,7 @@ class NaiveBayesService
     }
 
     /**
-     * Latih model Naive Bayes menggunakan dataset training di database
-     * atau kamus default lexicon/training jika DB masih sedikit.
+     * Latih model Naive Bayes menggunakan dataset training di database.
      */
     public function train(?int $aspectId = null): void
     {
@@ -32,16 +31,27 @@ class NaiveBayesService
                 $q->where('aspect_id', $aspectId)->orWhereNull('aspect_id');
             });
         }
-        $dataset = $query->get();
 
+        $this->fit($query->get());
+    }
+
+    /**
+     * Inti pelatihan: menghitung statistik kata dari sekumpulan baris data latih.
+     * Dipisahkan dari train() agar bisa dipakai untuk melatih dengan subset data
+     * (misalnya 80% data latih saat evaluasi).
+     */
+    protected function fit(iterable $dataset): void
+    {
         // Reset state
         $this->classDocCounts = ['Positif' => 0, 'Negatif' => 0, 'Netral' => 0];
         $this->classWordCounts = ['Positif' => 0, 'Negatif' => 0, 'Netral' => 0];
         $this->wordFreqPerClass = ['Positif' => [], 'Negatif' => [], 'Netral' => []];
         $this->vocabulary = [];
-        $this->totalDocs = $dataset->count();
+        $this->totalDocs = 0;
 
         foreach ($dataset as $row) {
+            $this->totalDocs++;
+
             $label = $row->label;
             if (!in_array($label, $this->classes)) {
                 continue;
@@ -186,21 +196,73 @@ class NaiveBayesService
     }
 
     /**
-     * Hitung metrik evaluasi model (Accuracy, Precision, Recall, F1-Score)
-     * Menggunakan data latih atau k-fold / test set.
+     * Bagi data per kelas (stratified) menjadi data latih dan data uji.
+     * Pembagian bersifat deterministik: urutan ditentukan hash dari id + seed,
+     * sehingga hasilnya sama setiap halaman dibuka (selama datanya tidak berubah).
+     * Kelas yang punya kurang dari 2 data seluruhnya masuk data latih.
+     *
+     * @return array{0: array, 1: array} [data latih, data uji]
      */
-    public function evaluateModel(): array
+    protected function stratifiedSplit(iterable $datasets, float $testRatio = 0.2, int $seed = 42): array
+    {
+        $groups = [];
+        foreach ($datasets as $row) {
+            if (!in_array($row->label, $this->classes, true)) {
+                continue;
+            }
+            $groups[$row->label][] = $row;
+        }
+
+        $train = [];
+        $test = [];
+
+        foreach ($groups as $rows) {
+            usort($rows, fn ($a, $b) => crc32($seed . '-' . $a->id) <=> crc32($seed . '-' . $b->id));
+
+            $n = count($rows);
+            $nTest = $n >= 2 ? max(1, (int) round($n * $testRatio)) : 0;
+
+            foreach ($rows as $i => $row) {
+                if ($i < $nTest) {
+                    $test[] = $row;
+                } else {
+                    $train[] = $row;
+                }
+            }
+        }
+
+        return [$train, $test];
+    }
+
+    /**
+     * Hitung metrik evaluasi model (Accuracy, Precision, Recall, F1-Score).
+     * Model dilatih dengan 80% data (stratified) lalu diuji pada 20% sisanya
+     * yang tidak ikut dilatih.
+     */
+    public function evaluateModel(float $testRatio = 0.2): array
     {
         $datasets = TrainingDataset::all();
+
+        $kosong = [
+            'total_samples' => $datasets->count(),
+            'train_samples' => 0,
+            'test_samples' => 0,
+            'split' => '80:20',
+            'accuracy' => 0,
+            'precision' => 0,
+            'recall' => 0,
+            'f1_score' => 0,
+            'confusion_matrix' => [],
+        ];
+
         if ($datasets->count() === 0) {
-            return [
-                'total_samples' => 0,
-                'accuracy' => 0,
-                'precision' => 0,
-                'recall' => 0,
-                'f1_score' => 0,
-                'confusion_matrix' => [],
-            ];
+            return $kosong;
+        }
+
+        [$trainSet, $testSet] = $this->stratifiedSplit($datasets, $testRatio);
+
+        if (empty($testSet) || empty($trainSet)) {
+            return $kosong; // data terlalu sedikit untuk dibagi
         }
 
         // Confusion matrix: [actual][predicted]
@@ -212,28 +274,38 @@ class NaiveBayesService
         }
 
         $correct = 0;
-        $total = $datasets->count();
+        $total = count($testSet);
 
-        foreach ($datasets as $item) {
-            $pred = $this->predict($item->text, $item->aspect_id);
-            $predLabel = $pred['sentiment'];
-            $actualLabel = $item->label;
+        try {
+            // Latih HANYA dengan data latih (80%)
+            $this->fit($trainSet);
 
-            if (isset($cm[$actualLabel][$predLabel])) {
-                $cm[$actualLabel][$predLabel]++;
+            foreach ($testSet as $item) {
+                $pred = $this->predict($item->text);
+                $predLabel = $pred['sentiment'];
+                $actualLabel = $item->label;
+
+                if (isset($cm[$actualLabel][$predLabel])) {
+                    $cm[$actualLabel][$predLabel]++;
+                }
+
+                if ($predLabel === $actualLabel) {
+                    $correct++;
+                }
             }
-
-            if ($predLabel === $actualLabel) {
-                $correct++;
-            }
+        } finally {
+            // Model sekarang hanya mengenal 80% data; paksa dilatih ulang dengan
+            // seluruh data jika service ini dipakai untuk prediksi setelahnya.
+            $this->isTrained = false;
         }
 
-        $accuracy = $total > 0 ? round(($correct / $total) * 100, 2) : 0;
+        $accuracy = round(($correct / $total) * 100, 2);
 
-        // Macro-averaged Precision, Recall, F1
+        // Macro-averaged Precision, Recall, F1 (hanya kelas yang punya data uji)
         $precisions = [];
         $recalls = [];
         $f1s = [];
+        $support = [];
 
         foreach ($this->classes as $c) {
             $tp = $cm[$c][$c] ?? 0;
@@ -254,24 +326,31 @@ class NaiveBayesService
             $precisions[$c] = $prec;
             $recalls[$c] = $rec;
             $f1s[$c] = $f1;
+            $support[$c] = $tp + $fn;
         }
 
-        $macroPrecision = round((array_sum($precisions) / count($this->classes)) * 100, 2);
-        $macroRecall = round((array_sum($recalls) / count($this->classes)) * 100, 2);
-        $macroF1 = round((array_sum($f1s) / count($this->classes)) * 100, 2);
+        $kelasAda = array_keys(array_filter($support, fn ($n) => $n > 0));
+        $rata = fn (array $nilai) => round(
+            (array_sum(array_intersect_key($nilai, array_flip($kelasAda))) / max(1, count($kelasAda))) * 100,
+            2
+        );
 
         return [
-            'total_samples' => $total,
+            'total_samples' => $datasets->count(),
+            'train_samples' => count($trainSet),
+            'test_samples' => $total,
+            'split' => '80:20',
             'accuracy' => $accuracy,
-            'precision' => $macroPrecision,
-            'recall' => $macroRecall,
-            'f1_score' => $macroF1,
+            'precision' => $rata($precisions),
+            'recall' => $rata($recalls),
+            'f1_score' => $rata($f1s),
             'confusion_matrix' => $cm,
             'per_class' => [
                 'precision' => $precisions,
                 'recall' => $recalls,
                 'f1' => $f1s,
-            ]
+                'support' => $support,
+            ],
         ];
     }
 }

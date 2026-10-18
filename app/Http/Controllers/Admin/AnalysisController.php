@@ -115,7 +115,7 @@ class AnalysisController extends Controller
 
     public function modelMetrics(NaiveBayesService $nb)
     {
-        $evaluation = $nb->evaluateModel();
+        $evaluation = $this->muatMetrikColab(base_path('metrics.json')) ?? $nb->evaluateModel();
         $trainingCount = TrainingDataset::count();
         $datasets = TrainingDataset::with('aspect')->orderBy('id', 'desc')->paginate(15);
         $aspects = Aspect::orderBy('sort_order')->get();
@@ -144,4 +144,50 @@ class AnalysisController extends Controller
         $dataset->delete();
         return redirect()->back()->with('success', 'Data latih berhasil dihapus.');
     }
+
+        private function muatMetrikColab(string $path): ?array
+    {
+        if (! is_file($path)) {
+            return null;
+        }
+
+        $m = json_decode(file_get_contents($path), true);
+        if (! is_array($m) || ! isset($m['accuracy'], $m['report'], $m['confusion_matrix'], $m['labels'])) {
+            return null;
+        }
+
+        $per = ['precision' => [], 'recall' => [], 'f1' => [], 'support' => []];
+        $cm = [];
+
+        foreach ($m['labels'] as $i => $aktual) {
+            $per['precision'][$aktual] = $m['report'][$aktual]['precision'];
+            $per['recall'][$aktual]    = $m['report'][$aktual]['recall'];
+            $per['f1'][$aktual]        = $m['report'][$aktual]['f1-score'];
+            $per['support'][$aktual]   = (int) $m['report'][$aktual]['support'];
+
+            foreach ($m['labels'] as $j => $prediksi) {
+                $cm[$aktual][$prediksi] = $m['confusion_matrix'][$i][$j];
+            }
+        }
+
+        return [
+            'total_samples'    => $m['train_samples'] + $m['test_samples'],
+            'train_samples'    => $m['train_samples'],
+            'test_samples'     => $m['test_samples'],
+            'split'            => $m['split'],
+            'accuracy'         => $m['accuracy'],
+            'precision'        => round($m['report']['macro avg']['precision'] * 100, 2),
+            'recall'           => round($m['report']['macro avg']['recall'] * 100, 2),
+            'f1_score'         => round($m['report']['macro avg']['f1-score'] * 100, 2),
+            'weighted' => [
+                'precision' => round($m['report']['weighted avg']['precision'] * 100, 2),
+                'recall'    => round($m['report']['weighted avg']['recall'] * 100, 2),
+                'f1_score'  => round($m['report']['weighted avg']['f1-score'] * 100, 2),
+            ],
+            'confusion_matrix' => $cm,
+            'per_class'        => $per,
+            'sumber'           => 'Colab: ' . ($m['sumber_teks'] ?? ''),
+        ];
+    }
+
 }

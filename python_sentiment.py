@@ -2,17 +2,18 @@ import sys
 import os
 import json
 import re
-import pickle
 import warnings
 warnings.filterwarnings('ignore')
 
+import joblib
+from sklearn.feature_extraction.text import TfidfVectorizer
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 
 # Inisialisasi Stopword & Stemmer
-factory_stopword = StopWordRemoverFactory()
-stopwords = set(factory_stopword.get_stop_words()) - {'tidak', 'bukan', 'jangan', 'belum', 'kurang'}
+stopwords = set(StopWordRemoverFactory().get_stop_words()) - {'tidak', 'bukan', 'jangan', 'belum', 'kurang'}
 stemmer = StemmerFactory().create_stemmer()
+
 
 def cleaning(text):
     text = str(text)
@@ -22,11 +23,14 @@ def cleaning(text):
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
+
 def case_folding(text):
     return text.lower()
 
+
 def tokenizing(text):
     return text.split()
+
 
 def preprocess(text):
     clean = cleaning(text)
@@ -38,71 +42,91 @@ def preprocess(text):
         'clean': clean,
         'tokens': tokens,
         'filtered_tokens': filtered,
-        'stemmed_text': stemmed
+        'stemmed_text': stemmed,
     }
+
+
+def muat_model(path):
+    """Mengembalikan (classifier, vectorizer). vectorizer = None bila model berupa Pipeline."""
+    obj = joblib.load(path)
+
+    if not isinstance(obj, dict):
+        return obj, None                       # Pipeline / model tunggal
+
+    clf = obj.get('model')
+    vec = next((v for v in obj.values() if isinstance(v, TfidfVectorizer)), None)
+
+    if clf is None:
+        raise ValueError('Kunci "model" tidak ada. Kunci tersedia: ' + ', '.join(obj.keys()))
+    if vec is None and not hasattr(clf, 'named_steps'):
+        tipe = {k: type(v).__name__ for k, v in obj.items()}
+        raise ValueError('TfidfVectorizer tidak ditemukan di file model. Isi file: ' + json.dumps(tipe))
+    return clf, vec
+
+
+def prediksi(clf, vec, teks_stem):
+    data = vec.transform([teks_stem]) if vec is not None else [teks_stem]
+    pred = str(clf.predict(data)[0])
+    probas = clf.predict_proba(data)[0]
+    scores = {str(k): round(float(p), 4) for k, p in zip(clf.classes_, probas)}
+    confidence = round(float(max(probas)), 4)
+    return pred, scores, confidence
+
 
 def main():
     if len(sys.argv) < 2:
         print(json.dumps({'error': 'No mode provided'}))
         sys.exit(1)
-        
-    mode = sys.argv[1] # 'single' or 'batch'
-    model_path = sys.argv[2] if len(sys.argv) > 2 else 'model_tfidf_naive_bayes.pkl'
-    
-    if not os.path.exists(model_path):
-        # Fallback lokasi
-        paths_to_check = [
-            model_path,
-            os.path.join(os.path.dirname(__file__), '..', 'model_tfidf_naive_bayes.pkl'),
-            os.path.join(os.path.dirname(__file__), 'model_tfidf_naive_bayes.pkl'),
-            r'C:\Users\user\OneDrive\Desktop\vrillia\model_tfidf_naive_bayes.pkl'
-        ]
-        for p in paths_to_check:
-            if os.path.exists(p):
-                model_path = p
-                break
 
-    with open(model_path, 'rb') as f:
-        model = pickle.load(f)
+    mode = sys.argv[1]  # 'single' atau 'batch'
+
+    BASE = os.path.dirname(os.path.abspath(__file__))
+    model_path = sys.argv[2] if len(sys.argv) > 2 else os.path.join(BASE, 'model_tfidf_naive_bayes.pkl')
+
+    if not os.path.exists(model_path):
+        print(json.dumps({'error': f'Model tidak ditemukan: {model_path}'}))
+        sys.exit(1)
+
+    try:
+        clf, vec = muat_model(model_path)
+    except Exception as e:
+        print(json.dumps({'error': str(e)}))
+        sys.exit(1)
 
     if mode == 'single':
         raw_text = sys.argv[3] if len(sys.argv) > 3 else ''
         prep = preprocess(raw_text)
-        pred = model.predict([prep['stemmed_text']])[0]
-        probas = model.predict_proba([prep['stemmed_text']])[0]
-        scores = dict(zip(model.classes_, [round(float(p), 4) for p in probas]))
-        confidence = round(float(max(probas)), 4)
-        
-        result = {
+        pred, scores, confidence = prediksi(clf, vec, prep['stemmed_text'])
+        print(json.dumps({
             'raw': raw_text,
             'preprocessing': prep,
             'sentiment': pred,
             'confidence': confidence,
-            'scores': scores
-        }
-        print(json.dumps(result))
-        
+            'scores': scores,
+        }))
+
     elif mode == 'batch':
+        sys.stdin.reconfigure(encoding='utf-8')
         input_data = json.loads(sys.stdin.read())
         results = []
         for item in input_data:
-            item_id = item.get('id')
             raw_text = item.get('text', '')
             prep = preprocess(raw_text)
-            pred = model.predict([prep['stemmed_text']])[0]
-            probas = model.predict_proba([prep['stemmed_text']])[0]
-            scores = dict(zip(model.classes_, [round(float(p), 4) for p in probas]))
-            confidence = round(float(max(probas)), 4)
-            
+            pred, scores, confidence = prediksi(clf, vec, prep['stemmed_text'])
             results.append({
-                'id': item_id,
+                'id': item.get('id'),
                 'raw': raw_text,
                 'preprocessing': prep,
                 'sentiment': pred,
                 'confidence': confidence,
-                'scores': scores
+                'scores': scores,
             })
         print(json.dumps(results))
+
+    else:
+        print(json.dumps({'error': f'Mode tidak dikenal: {mode}'}))
+        sys.exit(1)
+
 
 if __name__ == '__main__':
     main()
