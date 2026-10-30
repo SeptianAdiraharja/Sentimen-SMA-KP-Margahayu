@@ -1,53 +1,53 @@
 {
-  "accuracy": 80.49,
+  "accuracy": 79.21,
   "report": {
     "Positif": {
-      "precision": 0.782608695652174,
-      "recall": 0.9,
-      "f1-score": 0.8372093023255814,
-      "support": 20.0
+      "precision": 0.8035714285714286,
+      "recall": 0.9183673469387755,
+      "f1-score": 0.8571428571428571,
+      "support": 49.0
     },
     "Netral": {
-      "precision": 0.8333333333333334,
-      "recall": 0.8333333333333334,
-      "f1-score": 0.8333333333333334,
-      "support": 18.0
+      "precision": 0.7727272727272727,
+      "recall": 0.7555555555555555,
+      "f1-score": 0.7640449438202247,
+      "support": 45.0
     },
     "Negatif": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1-score": 0.0,
-      "support": 3.0
+      "precision": 1.0,
+      "recall": 0.14285714285714285,
+      "f1-score": 0.25,
+      "support": 7.0
     },
-    "accuracy": 0.8048780487804879,
+    "accuracy": 0.7920792079207921,
     "macro avg": {
-      "precision": 0.5386473429951691,
-      "recall": 0.5777777777777778,
-      "f1-score": 0.5568475452196383,
-      "support": 41.0
+      "precision": 0.8587662337662337,
+      "recall": 0.6055933484504913,
+      "f1-score": 0.6237292669876939,
+      "support": 101.0
     },
     "weighted avg": {
-      "precision": 0.7476139978791092,
-      "recall": 0.8048780487804879,
-      "f1-score": 0.7742484401588202,
-      "support": 41.0
+      "precision": 0.8034428442844285,
+      "recall": 0.7920792079207921,
+      "f1-score": 0.7735843809100011,
+      "support": 101.0
     }
   },
   "confusion_matrix": [
     [
-      18,
-      2,
+      45,
+      4,
       0
     ],
     [
-      3,
-      15,
+      11,
+      34,
       0
     ],
     [
-      2,
-      1,
-      0
+      0,
+      6,
+      1
     ]
   ],
   "labels": [
@@ -55,8 +55,8 @@
     "Netral",
     "Negatif"
   ],
-  "train_samples": 161,
-  "test_samples": 41,
+  "train_samples": 402,
+  "test_samples": 101,
   "split": "80:20",
   "random_state": 42,
   "sumber_teks": "1. Bagaimana pendapat Anda secara umum mengenai cita rasa (rasa enak/kurang pas/hambar) menu makanan MBG yang disajikan?"
